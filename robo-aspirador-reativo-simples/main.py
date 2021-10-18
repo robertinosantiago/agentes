@@ -1,5 +1,8 @@
 from RoboReativoSimples import RoboReativoSimples
 from Quarto import Quarto
+from Regra import Regra
+from Agente import Agente
+from Ambiente import Ambiente
 
 def temSujeira(quartos):
     for quarto in quartos:
@@ -7,19 +10,31 @@ def temSujeira(quartos):
             return True
     return False
 
-quartos = [Quarto('quarto-A'), Quarto('quarto-B')]
-robo = RoboReativoSimples()
+def interpretador(estado):
+    return estado
 
-indice = 0
-while temSujeira(quartos):
-    acao = robo.agir(quartos[indice].getNome(), quartos[indice].getStatus());
-    if acao == 'limpar':
-        totalSujeiraQuarto = quartos[indice].getQuantidadeSujeira()
-        quartos[indice].setQuantidadeSujeira(totalSujeiraQuarto-1)
-        if quartos[indice].getQuantidadeSujeira() == 0:
-            quartos[indice].setStatus(0)
-    if acao == 'direita':
-        indice = 1
-    if acao == 'esquerda':
-        indice = 0
-    print(quartos[indice])
+quartoA = Quarto('quarto-A')
+quartoB = Quarto('quarto-B')
+
+regras = [
+    Regra((quartoA, 'sujo'), 'limpar'),
+    Regra((quartoB, 'sujo'), 'limpar'),
+    Regra((quartoA, 'limpo'), 'direita'),
+    Regra((quartoB, 'limpo'), 'esquerda'),
+]
+
+quartos = [quartoA, quartoB]
+robo = RoboReativoSimples(regras, interpretador)
+programa = robo.getPrograma()
+
+agente = Agente(programa)
+ambiente = Ambiente(quartos)
+ambiente.adicionaCoisa(agente)
+ambiente.executar()
+
+print("\nStatus final dos quartos")
+print(ambiente.status)
+
+print("Desempenho do agente: {}".format(agente.desempenho))
+
+assert ambiente.status == {quartoA: 'limpo', quartoB: 'limpo'}
