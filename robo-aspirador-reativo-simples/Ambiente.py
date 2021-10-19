@@ -11,7 +11,8 @@ class Ambiente:
         
         self.status = {}
         for quarto in self.quartos:
-            self.status[quarto] = random.choice(['limpo', 'sujo'])
+            #self.status[quarto] = random.choice(['limpo', 'sujo'])
+            self.status[quarto] = 'sujo'
 
         print("\nStatus inicial dos quartos")
         print(self.status)
@@ -29,7 +30,15 @@ class Ambiente:
         elif acao == 'limpar':
             if self.status[agente.localizacao] == 'sujo':
                 agente.desempenho += 10
-            self.status[agente.localizacao] = 'limpo'
+                '''
+                @TODO: melhorar essa busca
+                '''
+                for i in range(len(self.quartos)):
+                    if self.quartos[i] == agente.localizacao:
+                        self.quartos[i].quantidadeSujeira -= 1
+                        if self.quartos[i].estaLimpo():
+                            self.status[agente.localizacao] = 'limpo'
+            
 
     def localizacaoPadrao(self, coisa):
         return random.choice(self.quartos)
@@ -51,13 +60,20 @@ class Ambiente:
 
 
     def executar(self, passos=1000):
-        for passo in range(passos):
-            if self.estaFinalizado():
-                return
+        while not self.estaFinalizado():
             self.passo()
+        #for passo in range(passos):
+        #    if self.estaFinalizado():
+        #        return
+        #    self.passo()
 
     def estaFinalizado(self):
-        return not any(agente.estaVivo() for agente in self.agentes)
+        for quarto in self.quartos:
+            if not quarto.estaLimpo():
+                return False
+        return True
+        #return any(quarto.estaLimpo() for quarto in self.quartos)
+        #return not any(agente.estaVivo() for agente in self.agentes)
 
     def adicionaCoisa(self, coisa, localizacao=None):
         if not isinstance(coisa, Coisa):

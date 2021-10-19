@@ -5,12 +5,15 @@ class Quarto:
     Classe para definir quartos a serem limpos pelo robô
     """
     def __init__(self, nome):
-        #self.status = 'sujo'
-        #self.quantidadeSujeira = random.randint(1,100)
+        self.status = 'sujo'
+        self.quantidadeSujeira = random.randint(1,100)
         self.nome = nome
     
     def getNome(self):
         return self.nome
+
+    def estaLimpo(self):
+        return self.quantidadeSujeira == 0
 
     #def getStatus(self):
     #    return self.status

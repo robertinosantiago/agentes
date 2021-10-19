@@ -30,7 +30,7 @@ programa = robo.getPrograma()
 agente = Agente(programa)
 ambiente = Ambiente(quartos)
 ambiente.adicionaCoisa(agente)
-ambiente.executar()
+ambiente.executar(2)
 
 print("\nStatus final dos quartos")
 print(ambiente.status)
